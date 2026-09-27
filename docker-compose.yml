@@ -1,0 +1,27 @@
+# Local development services. Start with: pnpm db:up
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mychat-postgres
+    environment:
+      POSTGRES_USER: mychat
+      POSTGRES_PASSWORD: mychat
+      POSTGRES_DB: mychat
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Creates the mychat_test database used by e2e tests (first start only)
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mychat -d mychat']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Added in later phases (see docs/roadmap.md):
+  # redis:   WebSocket fan-out across API instances (Phase 7)
+  # minio:   S3-compatible storage for attachments (Phase 6)
+
+volumes:
+  postgres-data:
