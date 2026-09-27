@@ -44,6 +44,11 @@ kotlin {
         // Each platform gets the HTTP engine native to it. Ktor picks it up automatically.
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            // Ktor 3.6 brings OkHttp 5.5, whose Android artifact demands compileSdk 37 (AGP 9.4+).
+            // 5.4 works with compileSdk 36 and is API-compatible with Ktor's engine.
+            implementation("com.squareup.okhttp3:okhttp") {
+                version { strictly(libs.versions.okhttp.get()) }
+            }
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
