@@ -1,0 +1,29 @@
+{
+  "name": "@mychat/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "API contracts shared by the backend and the web app: request/response shapes (Zod schemas + TS types) and WebSocket event envelopes. Kotlin mirrors live in mobile/shared.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@mychat/tsconfig": "workspace:*",
+    "typescript": "~6.0.3"
+  }
+}

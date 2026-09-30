@@ -1,0 +1,10 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Native/postinstall scripts that pnpm is allowed to run.
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@swc/core'
+  - 'sharp'
+  - 'unrs-resolver'

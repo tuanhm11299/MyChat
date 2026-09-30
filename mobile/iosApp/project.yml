@@ -1,0 +1,37 @@
+# XcodeGen spec: the Xcode project is generated from this file, so the
+# .xcodeproj is never edited by hand or committed.
+#   brew install xcodegen
+#   cd mobile/iosApp && xcodegen generate && open iosApp.xcodeproj
+name: iosApp
+options:
+  bundleIdPrefix: com.mychat
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources: [iosApp]
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: MyChat
+        UILaunchScreen: {}
+        # Development only: allow plain HTTP to the local API. Remove for production.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mychat.ios
+        # Where Gradle puts the Shared.framework for the current SDK/configuration.
+        FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+        OTHER_LDFLAGS: ["-framework", "Shared"]
+    preBuildScripts:
+      - name: Compile Kotlin shared framework
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode

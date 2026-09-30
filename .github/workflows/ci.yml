@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typescript:
+    name: API, web and contracts
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mychat
+          POSTGRES_PASSWORD: mychat
+          POSTGRES_DB: mychat_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U mychat -d mychat_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://mychat:mychat@localhost:5432/mychat_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm --filter @mychat/api test:e2e
+
+  mobile:
+    name: Mobile (KMP shared + Android)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      # The Android SDK is preinstalled on GitHub's Ubuntu runners.
+      - run: ./gradlew :shared:jvmTest :androidApp:assembleDebug --stacktrace

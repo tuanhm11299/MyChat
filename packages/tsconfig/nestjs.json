@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "isolatedModules": true,
+    "strictPropertyInitialization": false,
+    "declaration": false
+  }
+}
